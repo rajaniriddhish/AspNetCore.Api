@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel;
-using Web_API.Data;
+using Web_API.CustomActionFilters;
 using Web_API.Models.Domain;
 using Web_API.Models.DTO;
 using Web_API.Repositories;
@@ -55,6 +53,7 @@ namespace Web_API.Controllers
         // Create Walks
         // POST: /api/walks
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] AddWalkRequestDto addWalkRequestDto)
         { 
             //Map DTO to domain model
@@ -70,6 +69,7 @@ namespace Web_API.Controllers
         // PUT: http://localhost:port/api/walks/{id}
         [HttpPut]
         [Route("{id:Guid}")]
+        [ValidateModel]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateWalkRequestDto updateWalkRequestDto)
         {
             //Map DTO to Domain Model

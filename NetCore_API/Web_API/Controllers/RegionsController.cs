@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using Web_API.CustomActionFilters;
 using Web_API.Data;
 using Web_API.Models.Domain;
 using Web_API.Models.DTO;
@@ -56,6 +57,7 @@ namespace Web_API.Controllers
         // POST To Create New Region
         // POST: http://localhost:port/api/regions
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequest)
         {
             //Map DTO to Domain Model
@@ -67,13 +69,13 @@ namespace Web_API.Controllers
             //Map Domain model to DTO
             var regionDto = mapper.Map<RegionDto>(regionDomainModel);
             return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
-            
         }
 
         // Update Regino
         // PUT: http://localhost:port/api/regions/{id}
         [HttpPut]
         [Route("{id:Guid}")]
+        [ValidateModel]
         public async Task<IActionResult> Update([FromRoute]Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
             //Map DTO to Domain Model
