@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Text.Json;
 using Web_API.CustomActionFilters;
 using Web_API.Data;
 using Web_API.Models.Domain;
@@ -20,13 +21,15 @@ namespace Web_API.Controllers
         private readonly NZWalksDbContext _dbContext;
         private readonly IRegionRepository regionRepository;
         private readonly IMapper mapper;
+        private readonly ILogger<RegionsController> logger;
 
         public RegionsController(NZWalksDbContext dbContext, IRegionRepository regionRepository,
-            IMapper mapper) 
+            IMapper mapper, ILogger<RegionsController> logger) 
         {
             _dbContext = dbContext;
             this.regionRepository = regionRepository;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         // Get all regions
@@ -35,11 +38,23 @@ namespace Web_API.Controllers
         [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetAll()
         {
-            //Get Data from database
-            var regionsDomain= await regionRepository.GetAllAsync();
+            try
+            { 
+                //throw new Exception("Custom Exception");
+                logger.LogInformation("GetAll Regions Action method was invoked");
+                //Get Data from database
+                var regionsDomain= await regionRepository.GetAllAsync();
 
-            var regionDto = mapper.Map<List<RegionDto>>(regionsDomain);
-            return Ok(regionDto);
+                var regionDto = mapper.Map<List<RegionDto>>(regionsDomain);
+
+                logger.LogInformation($"Finished GetAll Regions request with data: {JsonSerializer.Serialize(regionsDomain)}");
+                return Ok(regionDto);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                throw;
+            }
         }
 
         // Get region by id
