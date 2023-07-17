@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using Web_API.CustomActionFilters;
 using Web_API.Models.Domain;
 using Web_API.Models.DTO;
@@ -31,8 +32,11 @@ namespace Web_API.Controllers
             //Get Data from database
             var walksDomain = await walkRepository.GetAllAsync(filterOn, filterQuery, sortBy, isAscending ?? true, pageNumber, pageSize);
 
+            //Create an exception
+            //throw new Exception("This is a new exception");
             var walkDto = mapper.Map<List<WalkDto>>(walksDomain);
             return Ok(walkDto);
+
         }
 
 
@@ -57,7 +61,7 @@ namespace Web_API.Controllers
         [HttpPost]
         [ValidateModel]
         public async Task<IActionResult> Create([FromBody] AddWalkRequestDto addWalkRequestDto)
-        { 
+        {
             //Map DTO to domain model
             var walkDomainModel = mapper.Map<Walk>(addWalkRequestDto);
 
